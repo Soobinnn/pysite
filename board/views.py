@@ -1,6 +1,8 @@
 from django.db.models import Max
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.views.generic import ListView
+from django.core.paginator import Paginator
 
 # Create your views here.
 from board.models import Board
@@ -10,8 +12,6 @@ from user.models import User
 
 def list(request):
     board = Board.objects.all().order_by('-group_no', 'order_no')
-
-    # for t in board:
 
 
     data = {'board': board}
@@ -46,7 +46,7 @@ def view(request):
     board.hit += 1
 
     board.save()
-    data ={'board': board}
+    data = {'board': board}
     return render(request, 'board/view.html', data)
 
 def reply(request):
@@ -69,7 +69,7 @@ def modify(request):
         'board': board
     }
 
-    return render(request, 'board/modify.html',data)
+    return render(request, 'board/modify.html', data)
 
 def modifysuccess(request):
     board = Board.objects.get(board_no=request.POST['board_no'])
@@ -79,3 +79,9 @@ def modifysuccess(request):
 
 
     return HttpResponseRedirect('/board/view?no='+request.POST['board_no'])
+
+def delete(request):
+    board = Board.objects.get(board_no=request.GET['no'])
+    board.delete()
+    return HttpResponseRedirect('/board')
+

@@ -25,7 +25,12 @@
 				</table>
 				<div class="bottom">
 					<a href="/board">글목록</a>
+                    {% if request.session.authuser.name == board.no.name %}
 					<a href="/board/modify?no={{board.board_no}}">글수정</a>
+                    {% else %}
+
+                    {%  endif %}
+
 						{% if request.session.authuser is None %}
 						<a href="/user/loginform">답글</a>
 						{% else %}

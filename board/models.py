@@ -17,3 +17,4 @@ class Board(models.Model):
 
     def __str__(self):
         return f'Board({self.board_no}, {self.title}, {self.contents}, {self.hit}, {self.reg_date}, {self.group_no}, {self.order_no}, {self.depth}, {self.no})'
+

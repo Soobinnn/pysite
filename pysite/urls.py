@@ -54,7 +54,7 @@ urlpatterns = [
 
     path('board/modify', board_views.modify),
     path('board/modifysuccess', board_views.modifysuccess),
-
+    path('board/delete', board_views.delete),
 
     path('admin/', admin.site.urls),
 ]
