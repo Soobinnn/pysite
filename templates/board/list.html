@@ -3,51 +3,7 @@
 {% block csslink %}
 <link href="/assets/css/board.css" rel="stylesheet" type="text/css">
 {% endblock %}
-<script>
-/* console.log('${authUser}');
-console.log('${sessionScope.authUser}');
-console.log('${sessionScope.authUser.no}');
-*/
-//이전 버튼 이벤트
-function fn_prev(page, range, rangeSize)
-{
-		var page = ((range - 2) * rangeSize) + 1;
-		var range = range - 1;
 
-		var url = "/board";
-
-		url = url + "?page=" + page;
-		url = url + "&range=" + range;
-
-		location.href = url;
-	}
-
-  //페이지 번호 클릭
-	function fn_pagination(page, range, rangeSize, searchType, keyword)
-  	{
-		var url = "/board";
-
-		url = url + "?page=" + page;
-		url = url + "&range=" + range;
-
-		location.href = url;
-
-	}
-
-	//다음 버튼 이벤트
-	function fn_next(page, range, rangeSize)
-	{
-
-		var page = parseInt((range * rangeSize)) + 1;
-		var range = parseInt(range) + 1;
-		var url = "/board";
-
-		url = url + "?page=" + page;
-		url = url + "&range=" + range;
-
-		location.href = url;
-	}
-</script>
 {% block content %}
 			<div id="board">
 				<form id="search_form" action="" method="post">
@@ -64,59 +20,70 @@ function fn_prev(page, range, rangeSize)
 						<th>작성일</th>
 						<th>&nbsp;</th>
 					</tr>
-					{% for board in board %}
+					{% for page_obj in page_obj %}
 							<tr>
-						<td>{{board.board_no}}</td>
-					 	{% if board.depth > 0 %}
+						<td>{{page_obj.board_no}}</td>
+					 	{% if page_obj.depth > 0 %}
 						<td style="text-align:left; padding-left:20px">
 							<img src='/assets/images/reply.png'>
-							<a href="/board/view?no={{board.board_no}}">{{board.title}}</a>
+							<a href="/board/view?no={{page_obj.board_no}}">{{page_obj.title}}</a>
 						</td>
 						{% else %}
 						<td style="text-align:left;">
-							<a href="/board/view?no={{board.board_no}}">{{board.title}}</a>
+							<a href="/board/view?no={{page_obj.board_no}}">{{page_obj.title}}</a>
 						</td>
 						{% endif %}
 
-						<td>{{board.no.name}}</td>
-						<td>{{board.hit}}</td>
-						<td>{{board.reg_date | date:'Y-m-d'}}</td>
-                       {% if request.session.authuser.name == board.no.name %}
+						<td>{{page_obj.no.name}}</td>
+						<td>{{page_obj.hit}}</td>
+						<td>{{page_obj.reg_date | date:'Y-m-d'}}</td>
+                       {% if request.session.authuser.name == page_obj.no.name %}
                            <td>
-                               <a href="/board/delete?no={{board.board_no}}" class="del">삭제</a>
+                               <a href="/board/delete?no={{page_obj.board_no}}" class="del">삭제</a>
                            </td>
 						{% else %}
 							<td></td>
 						{% endif %}
 					{% endfor %}
 				</table>
-				<!-- pager 추가 -->
-				<div class="pager">
-					<ul class="pagination">
-						<!--<c:if test="${pagination.prev}">-->
-							<li class="page-item">
-								<a class="page-link" href="#" onClick="fn_prev('${pagination.page}', '${pagination.range}', '${pagination.rangeSize}')">◀</a>
-							</li>
-						<!--</c:if>-->
+          <div>
+            <ul class="pagination">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a href="?page={{ page_obj.previous_page_number }}">
+                    <span>◀</span>
+                  </a>
+                </li>
+              {% else %}
+                <li class="disabled">
+                  <a href="#">
+                    <span>◀</span>
+                  </a>
+                </li>
+              {% endif %}
 
-						<!--<c:forEach begin="${pagination.startPage}" end="${pagination.endPage}" var="idx">-->
-							<li class="page-item <c:out value="${pagination.page == idx ? 'active' : ''}"/> "><a class="page-link" href="#" onClick="fn_pagination('${idx}', '${pagination.range}', '${pagination.rangeSize}')"> ${idx} </a></li>
-						<!--</c:forEach>-->
+              {% for page_range in page_range %}
+                <li {% if page_range == page_obj.number %}class="page-item active" {% else %}class="page-item"{% endif %}>
+                  <a href="?page={{page_range}}">{{ page_range }}</a>
+                </li>
+              {% endfor %}
 
-						<!--<c:if test="${pagination.next}">-->
-							<li class="page-item"><a class="page-link" href="#" onClick="fn_next('${pagination.range}', '${pagination.range}', '${pagination.rangeSize}')" >▶</a></li>
-						<!--</c:if>-->
-					</ul>
-				<!-- 	<ul>
-						<li><a href="">◀</a></li>
-						<li><a href="">1</a></li>
-						<li class="selected">2</li>
-						<li><a href="/board/list?p=3">3</a></li>
-						<li>4</li>
-						<li>5</li>
-						<li><a href="">▶</a></li>
-					</ul> -->
-				</div>
+
+              {% if page_obj.has_next %}
+                  <li class="page-item">
+                  <a href="?page={{ page_obj.next_page_number }}">
+                    <span>▶</span>
+                  </a>
+                </li>
+              {% else %}
+                <li {% if not page_obj.has_next %}class="disabled"{% endif %}>
+                  <a href="#">
+                    <span>▶</span>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
 				<!-- pager 추가 -->
 				<div class="bottom">
 					{% if request.session.authuser is not None %}
