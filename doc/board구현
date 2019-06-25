@@ -1,0 +1,48 @@
+1. limit 처리
+   start = (page-1)*pagesize
+   Board.objects.all().order_by('-refdate')[start:start+pagesize]
+
+2. insert
+    board = Board()
+    board.title = ',,,'
+    ....
+    ....
+    board.user_id = ------
+
+    board.save()
+
+3. increase hit
+
+   board = Board......
+   board.hit = board.hit + 1
+   board.save()
+
+4. TotalCount
+   Board.objects.count()
+
+-------------------------------------------
+def count_add(request):
+    c = Counter()
+    c.groupno = 1
+    c.depth = 1
+    c.orderno = 2
+    c.save()
+
+    return HttpResponse('ok')
+
+def counter_update(request):
+    return HttpResponse('ok')
+
+def counter_max(request):
+    return HttpResponse('ok')
+
+def counter_update(request):
+    # queryset 예제
+    # groupno = 1 이고 orderno >= 2의 게시물의
+    # orderno를 1씩 증가
+    # __gt, __lt, __gte, __lte
+    Counter.objects.filter(groupno=1).filter(orderno_gte=2).update(orderno=F('orderno')+i)
+
+    for t in r:
+        c.orderno = c.orderno + 1
+        c.save()

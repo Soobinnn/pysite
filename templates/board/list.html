@@ -1,0 +1,77 @@
+{% extends '../base.html' %}
+{% load mathfilters %}
+{% block csslink %}
+<link href="/assets/css/board.css" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+			<div id="board">
+				<form id="search_form" action="" method="post">
+					{% csrf_token %}
+					<input type="text" id="kwd" name="kwd" value="">
+					<input type="submit" value="찾기">
+				</form>
+				<table class="tbl-ex">
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>글쓴이</th>
+						<th>조회수</th>
+						<th>작성일</th>
+						<th>&nbsp;</th>
+					</tr>
+					{% for board in board %}
+							<tr>
+						<td>{{board.board_no}}</td>
+					 	{% if board.depth > 0 %}
+						<td style="text-align:left; padding-left:20px">
+							<img src='/assets/images/reply.png'>
+							<a href="/board/view?no={{board.board_no}}">{{board.title}}</a>
+						</td>
+						{% else %}
+						<td style="text-align:left;">
+							<a href="/board/view?no={{board.board_no}}">{{board.title}}</a>
+						</td>
+						{% endif %}
+
+						<td>{{user.name}}</td>
+						<td>{{board.hit}}</td>
+						<td>{{board.reg_date | date:'Y-m-d H:i:s'}}</td>
+						<td><a href="/board/delete/" class="del">삭제</a></td>
+					{% endfor %}
+				</table>
+				<!-- pager 추가 -->
+				<div class="pager">
+					<ul class="pagination">
+						<!--<c:if test="${pagination.prev}">-->
+							<li class="page-item">
+								<a class="page-link" href="#" onClick="fn_prev('${pagination.page}', '${pagination.range}', '${pagination.rangeSize}')">◀</a>
+							</li>
+						<!--</c:if>-->
+
+						<!--<c:forEach begin="${pagination.startPage}" end="${pagination.endPage}" var="idx">-->
+							<li class="page-item <c:out value="${pagination.page == idx ? 'active' : ''}"/> "><a class="page-link" href="#" onClick="fn_pagination('${idx}', '${pagination.range}', '${pagination.rangeSize}')"> ${idx} </a></li>
+						<!--</c:forEach>-->
+
+						<!--<c:if test="${pagination.next}">-->
+							<li class="page-item"><a class="page-link" href="#" onClick="fn_next('${pagination.range}', '${pagination.range}', '${pagination.rangeSize}')" >▶</a></li>
+						<!--</c:if>-->
+					</ul>
+				<!-- 	<ul>
+						<li><a href="">◀</a></li>
+						<li><a href="">1</a></li>
+						<li class="selected">2</li>
+						<li><a href="/board/list?p=3">3</a></li>
+						<li>4</li>
+						<li>5</li>
+						<li><a href="">▶</a></li>
+					</ul> -->
+				</div>
+				<!-- pager 추가 -->
+				<div class="bottom">
+					{% if request.session.authuser is not None %}
+					<a href="/board/write" id="new-book">글쓰기</a>
+					{% endif %}
+				</div>				
+			</div>
+{% endblock %}
